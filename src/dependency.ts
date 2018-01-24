@@ -5,10 +5,14 @@ import {IDependency, IVersion} from "./interfaces";
 
 export class Dependency implements IDependency {
     Name: string;
-    Version: IVersion;
+    RequiredVersion: IVersion;
+
+    private InstalledVersion: IVersion;
+
     constructor(name: string, version: IVersion){
         this.Name = name;
-        this.Version = version;
+        this.RequiredVersion = version;
+        this.InstalledVersion = null;
     }
 
     public isInstalled(): Q.Promise<IDependency> {
@@ -16,11 +20,11 @@ export class Dependency implements IDependency {
         // --version option.
         return Q.Promise((resolve, reject) => {
             return this.getInstalledVersion().then(installedVersion =>{
-                if(installedVersion.isGreater(this.Version) ||
-                   installedVersion.isEqual(this.Version)){
+                if(installedVersion.isGreater(this.RequiredVersion) ||
+                   installedVersion.isEqual(this.RequiredVersion)){
                      resolve(this);
                 }else{
-                    reject("Version >= " + this.Version.toString() + "of " +
+                    reject("Version >= " + this.RequiredVersion.toString() + "of " +
                         "package " + this.Name + " is required");
                 }
             }).catch((error)=>{
@@ -29,11 +33,16 @@ export class Dependency implements IDependency {
         });
     }
 
-    private getInstalledVersion(): Q.Promise<IVersion> {
+    private getInstalledVersion(force: boolean = false): Q.Promise<IVersion> {
         return Q.Promise((resolve, reject) => {
+            if(!force && this.InstalledVersion != null){
+                return resolve(this.InstalledVersion)
+            }
+
             return (new CommandExecutor).exec(this.Name,["--version"])
             .then((stdout) => {
-                resolve(Version.fromString(stdout.split(" ")[1]));
+                this.InstalledVersion = Version.fromString(stdout.split(" ")[1]);
+                resolve(this.InstalledVersion);
             })
             .catch((stderr)=>{
                 reject(stderr);

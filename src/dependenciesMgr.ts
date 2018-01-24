@@ -29,8 +29,9 @@ export class DependenciesMgr {
         return Q.all(packages);
     }
 
-    public checkNewVersions() : Q.Promise<[]> {
-        return Q.reject('Not implemented!');
-    }
+    public static checkForNewVersion() : Q.Promise<[]> {
+        
 
+
+    }
 }

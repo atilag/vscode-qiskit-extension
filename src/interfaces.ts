@@ -11,8 +11,13 @@ export interface IVersion  {
 }
 
 export interface IDependency {
-    Name: string,
-    Version: IVersion,
+    Name: string;
+    RequiredVersion: IVersion;
     isInstalled(): Q.Promise<void>;
+}
+
+export interface IPackage {
+    checkForNewVersion(): Q.Promise<string>;
+    update(): Q.Promise<string>;
 }
 

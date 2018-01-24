@@ -27,7 +27,7 @@ export function activate(context: vscode.ExtensionContext) {
         return Q.resolve();
     // Check for newer versions
     }).then(()=>{
-        return DependenciesMgr.checkNewVersions();
+        return DependenciesMgr.checkForNewVersions();
     // Update packages
     }).then(newPackages => {
         // TODO Update managment (ask user, install, etc...)

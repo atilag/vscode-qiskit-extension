@@ -5,7 +5,8 @@ import * as vscode from 'vscode';
 import * as Q from "q";
 
 import {CommandPaletteHelper} from "./commandPaletteHelper";
-import {DependenciesMgr} from "./dependenciesMgr";
+import {DependencyMgr} from "./dependencyMgr";
+import {PackageMgr} from "./packageMgr";
 import {configure} from 'vscode/lib/testrunner';
 
 
@@ -18,25 +19,18 @@ export function activate(context: vscode.ExtensionContext) {
     // This line of code will only be executed once when your extension is activated
     registerQiskitCommands(context);
 
-    DependenciesMgr.checkDependencies().then((deps) => {
-        console.log('All depdencies are met!');
+    DependencyMgr.checkDependencies().then((deps) => {
+        console.log('All dependencies are met!');
         deps.forEach(dep => {
             console.log("Package: " + dep.Name + " Version: " +
                 dep.Version);
         });
         return Q.resolve();
-    // Check for newer versions
-    }).then(()=>{
-        return DependenciesMgr.checkForNewVersions();
-    // Update packages
-    }).then(newPackages => {
-        // TODO Update managment (ask user, install, etc...)
-        if (newPackages.length > 0){
-            console.log('Updates found for: ');
-            newPackages.forEach(_package => {
-                console.log(_package.name + " " + _package.version);
-            });
-        }
+    // Check for pyhton packages!
+    }).then(() => {
+        console.log('Check for required python packages...');
+        return PackageMgr.check();
+    // Iterate over the list of packages
     }).catch(error => {
         console.log('Seems like some dependencies are not met: ' + error);
     });

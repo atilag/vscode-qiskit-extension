@@ -30,7 +30,8 @@
         "test": "npm run compile && node ./node_modules/vscode/bin/test"
     },
     "dependencies": {
-        "q": "^1.4.1"
+        "q": "^1.4.1",
+        "typed-rest-client": "^1.0.7"
     },
     "devDependencies": {
         "typescript": "^2.6.1",

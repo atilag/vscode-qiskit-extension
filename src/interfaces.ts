@@ -1,13 +1,25 @@
 import * as Q from "q";
 
-export interface IVersion  {
+export interface IVersionInfo {
     Major: Number;
     Minor: Number;
     Maintenance: Number;
+}
+
+export interface IVersion  {
+    Info: IVersionInfo;
     toString() : string;
     isEqual(version: IVersion): boolean;
     isGreater(version: IVersion): boolean;
     isLesser(version: IVersion): boolean;
+}
+
+export interface IPackageInfo {
+    Name: string;
+    Version: IVersion;
+    Summary: string;
+    Location: string;
+    Dependecies: [IPackageInfo];
 }
 
 export interface IDependency {
@@ -17,7 +29,9 @@ export interface IDependency {
 }
 
 export interface IPackage {
-    checkForNewVersion(): Q.Promise<string>;
+    Info: IPackageInfo;
+    // Checks whether or not the package is installed, and if installed, check
+    // for newer versions
+    check(): Q.Promise<void>;
     update(): Q.Promise<string>;
 }
-

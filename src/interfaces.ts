@@ -19,7 +19,8 @@ export interface IPackageInfo {
     Version: IVersion;
     Summary: string;
     Location: string;
-    Dependecies: [IPackageInfo];
+    Dependencies: string; //TODO:Should be [IPackageInfo]
+    getPackageInfo(pkg: string): Q.Promise<IPackageInfo>;
 }
 
 export interface IDependency {

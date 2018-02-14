@@ -7,28 +7,29 @@ import {PipWrapper} from "./pipWrapper";
 import {PyPiWrapper} from "./pypiWrapper";
 
 export class PipPackage implements IPackage {
-    public Info: IPackageInfo;
-    private pip : PipWrapper;
-    private pypi: PyPiWrapper;
-    
-    constructor(name: string, version: IVersionInfo){
-        this.Info.Name = name
-        this.Info.Version = new Version(version.Major, version.Minor,
-            version.Maintenance);
-    }
+    //TODO: Get Info form local installation
+    public Info: IPackageInfo = {
+        Name: "",
+        Version: Version.fromString("-1.-1.-1"),
+        Summary: "",
+        Location: "",
+        Dependencies: "",
+        getPackageInfo: ()=>{},
+    };
 
-    private isInstalled(): Q.Promise {
-        this.pip.show(this.Info.Name).then((stdout: string) => {
-            return Q.resolve();
-        }).catch(error => {
-            return Q.reject(error);
-        });
+    private pip : PipWrapper = new PipWrapper();
+    private pypi: PyPiWrapper = new PyPiWrapper();
+    
+    constructor(name: string){
+        this.Info.Name = name;
     }
 
     public check(): Q.Promise<void> {
-        this.isInstalled().then(() => {
+        return this.pip.getPackageInfo(this.Info.Name)
+        .then((installedPkgInfo: IPackageInfo) => {
+            this.Info = installedPkgInfo;
             // Let's check for new versions
-            return this.pypi.packageInfo(this.Info.Name);
+            return this.pypi.getPackageInfo(this.Info.Name);
         }).then((pkgInfo: IPackageInfo) => {
             if(pkgInfo.Version.isGreater(this.Info.Version)){
                 // TODO: Show a user dialog and asks for permission to update
@@ -41,19 +42,13 @@ export class PipPackage implements IPackage {
         // There's a new version...
         }).then((selection: string|undefined) => {
             if(selection == 'Yes'){
-                this.pip.update('qiskit').then(() => {
-                    return Q.resolve();
-                }).catch(error => {
-                    // TODO: sure? 
-                    // If we couldn't upgrade, there's no critical error.
-                    console.log("ERROR Upgrading QISKit package: " + error);
-                    return Q.resolve();
-                });
+                return this.pip.update('qiskit');
             }
+            return Q.resolve();
         });
     }
 
     public update(): Q.Promise<string> {
-
+        return Q.resolve();
     }
 }

@@ -1,8 +1,7 @@
 import {IVersion, IVersionInfo} from "./interfaces"
-import { NaptrRecord } from "dns";
 
 export class Version implements IVersion {
-    Info: IVersionInfo;
+    Info: IVersionInfo = { Major:-1, Minor:-1, Maintenance: -1};
     constructor(major: Number, minor: Number, maintenance: Number){
         this.Info.Major = major;
         this.Info.Minor = minor;
@@ -10,7 +9,7 @@ export class Version implements IVersion {
     }
 
     public static fromString(versionString: string) : IVersion {
-        let versionStrings = versionString.split('.');
+        let versionStrings = versionString.split('.') || versionString;
         let major: Number = -1;
         let minor: Number = -1;
         let maintenance: Number = -1;

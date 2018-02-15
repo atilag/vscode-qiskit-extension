@@ -23,7 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
         console.log('All dependencies are met!');
         deps.forEach(dep => {
             console.log("Package: " + dep.Name + " Version: " +
-                dep.Version);
+                dep.InstalledVersion);
         });
         return Q.resolve();
     // Check for pyhton packages!

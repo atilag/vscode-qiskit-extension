@@ -9,7 +9,7 @@ import {Dependency} from "./dependency";
 import {Version} from "./version";
 
 export class DependencyMgr {
-    private static dependencies : [IDependency] = [
+    private static dependencies : IDependency[] = [
         new Dependency('pip', Version.fromString('9')),
         new Dependency('python', Version.fromString('3.5'))
     ];

@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
         return PackageMgr.check();
     // Iterate over the list of packages
     }).catch(error => {
-        console.log('Seems like some dependencies are not met: ' + error);
+        console.log('Seems like there was a problem: ' + error);
     });
 }
 

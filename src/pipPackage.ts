@@ -35,14 +35,22 @@ export class PipPackage implements IPackage {
                 // TODO: Show a user dialog and asks for permission to update
                 return vscode.window.showInputBox({
                     ignoreFocusOut: true,
-                    prompt: "There's a new QISKit release. Do you want to update?",
+                    prompt: `There's a new QISKit release: ${pkgInfo.Version.toString()}. Do you want to upgrade?`,
                     value: 'Yes',
                 });
             }
         // There's a new version...
         }).then((selection: string|undefined) => {
             if(selection == 'Yes'){
-                return this.pip.update('qiskit');
+                return this.pip.update('qiskit').then((stdout) => {
+                    console.log(stdout);
+                    vscode.window.showInformationMessage('QISKit updated!!');
+                    return Q.resolve();
+                }).catch((error) => {
+                    console.log(error);
+                    vscode.window.showInformationMessage(`ERROR: Couldn't upgrade QISKit. ${error}`);
+                    return Q.reject(error);
+                });
             }
             return Q.resolve();
         });

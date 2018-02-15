@@ -17,7 +17,8 @@ export class PipWrapper implements IPackageInfo {
     constructor(){}
 
     public getPackageInfo(pkgStr: string) : Q.Promise<IPackageInfo> {
-        return this.show(pkgStr).then((stdout: string) => {
+        return this.show(pkgStr)
+        .then((stdout: string) => {
             let regEx = new RegExp(/(Name:\ |Version:\ |Summary:\ |Location:\ |Requires:\ )(.+?(?=\n))/g);
             let pkg = new PipWrapper();
             let pkgInfo;
@@ -38,7 +39,7 @@ export class PipWrapper implements IPackageInfo {
             failed = failed || pkgInfo == null;
             pkg.Dependencies = pkgInfo[2];
             if(failed){
-                return Q.rejec(`ERROR: Couldn't parse package information from
+                return Q.reject(`ERROR: Couldn't parse package information from
                                'pip show' command output!`);
             }
             return Q.resolve(pkg);
@@ -68,7 +69,7 @@ export class PipWrapper implements IPackageInfo {
 
     public update(pkg: string): Q.Promise<string>{
         let parserFunc : ParserFunction = (stdout: string) => {
-            return "Need to implement this method!";
+            return stdout;
         };
         return this.exec("install", ["-U", "--no-cache-dir", pkg], parserFunc);
     }
@@ -80,8 +81,6 @@ export class PipWrapper implements IPackageInfo {
         return (new CommandExecutor).exec(PipWrapper.PIP_COMMAND,[command].concat(args))
         .then((stdout) => {
             return Q.resolve(parser(stdout));
-        }).catch((stderr) => {
-            return Q.reject(stderr);
         });
     }
 }

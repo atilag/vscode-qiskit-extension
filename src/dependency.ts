@@ -27,8 +27,6 @@ export class Dependency implements IDependency {
                     reject("Version >= " + this.RequiredVersion.toString() + "of " +
                         "package " + this.Name + " is required");
                 }
-            }).catch((error) => {
-                reject(error);
             });
         });
     }
@@ -43,9 +41,6 @@ export class Dependency implements IDependency {
             .then((stdout) => {
                 this.InstalledVersion = Version.fromString(stdout.split(" ")[1]);
                 resolve(this.InstalledVersion);
-            })
-            .catch((stderr) => {
-                reject(stderr);
             });
         });
     }
